@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Task Manager</title>
+   
+</head>
+<body>
+    <h1>Task Manager App</h1>
+    <div id="taskList">
+        <h2>Create Task</h2>
+        <form id="taskForm">
+            <label for="taskTitle">Task Title:</label>
+            <input  type="text" id="taskTitle" required>
+            <br>
+            <label for="taskDescription">Task Description:</label>
+            <textarea id="taskDescription" rows="4" required></textarea>
+            <br>
+            <button type="button" onclick="addTask()">Create Task</button>
+        </form>
+        <h2>Task List</h2>
+        <div class="search">
+            <label for="searchTitle">
+                Search by Task Title:
+            </label>
+            <div class="search-input">
+                <input type="text" id="searchTitle" oninput="searchTasks()">
+                <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+            </div>
+        </div>
+        
+        
+        <div id="tasks"></div>
+    </div>
+
+    <script>
+        const tasks = [];
+
+        function addTask() {
+            const title = document.getElementById("taskTitle").value;
+            const description = document.getElementById("taskDescription").value;
+            const createDate = new Date().toLocaleDateString();
+            const task = { title, description, createDate };
+            tasks.push(task);
+            displayTasks();
+            document.getElementById("taskForm").reset();
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            displayTasks();
+        }
+
+        function searchTasks() {
+            const searchTitle = document.getElementById("searchTitle").value.toLowerCase();
+            const filteredTasks = tasks.filter(task => task.title.toLowerCase().includes(searchTitle));
+            displayTasks(filteredTasks);
+        }
+
+        function displayTasks(taskList = tasks) {
+            const taskContainer = document.getElementById("tasks");
+            taskContainer.innerHTML = "";
+
+            if (taskList.length === 0) {
+                taskContainer.innerHTML = "<p>No tasks found.</p>";
+            } else {
+                taskList.forEach((task, index) => {
+                    const taskDiv = document.createElement("div");
+                    taskDiv.classList.add("task");
+                    taskDiv.innerHTML = `
+                        <h3>${task.title}</h3>
+                        <p><strong>Description:</strong> ${task.description}</p>
+                        <p><strong>Create Date:</strong> ${task.createDate}</p>
+                        <button onclick="deleteTask(${index})">Delete</button>
+                    `;
+                    taskContainer.appendChild(taskDiv);
+                });
+            }
+        }
+
+        // Initial display of tasks
+        displayTasks();
+    </script>
+</body>
+</html>
